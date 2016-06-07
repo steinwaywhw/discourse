@@ -92,6 +92,18 @@ div.poll {
     }
   }
 
+  .poll-voters-list {
+    li {
+      display: inline;
+    }
+
+    margin: 5px 0;
+  }
+
+  .poll-voters-toggle-expand {
+    text-align: center;
+  }
+
   .results {
 
     .option {
