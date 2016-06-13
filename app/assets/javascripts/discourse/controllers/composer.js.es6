@@ -64,15 +64,14 @@ export default Ember.Controller.extend({
 
   init() {
     this._super();
-    const self = this
 
-    addPopupMenuOptions(function(controlller) {
+    addPopupMenuOptionsCallback(function(controlller) {
       return {
         action: 'toggleWhisper',
         icon: 'eye-slash',
         label: 'composer.toggle_whisper',
         condition: controlller.get("canWhisper")
-      }
+      };
     });
   },
 
@@ -112,9 +111,11 @@ export default Ember.Controller.extend({
     return currentUser && currentUser.get('staff') && this.siteSettings.enable_whispers && action === Composer.REPLY;
   },
 
-  @computed
-  popupMenuOptions() {
-    _popupMenuOptionsCallback.map(callback => callback(this));
+  @computed("model.composeState")
+  popupMenuOptions(composeState) {
+    if (composeState === 'open') {
+      return _popupMenuOptionsCallbacks.map(callback => callback(this));
+    }
   },
 
   showWarning: function() {
@@ -179,7 +180,8 @@ export default Ember.Controller.extend({
       this.toggleProperty('showToolbar');
     },
 
-    showOptions(loc) {
+    showOptions(toolbarEvent, loc) {
+      this.set('toolbarEvent', toolbarEvent);
       this.appEvents.trigger('popup-menu:open', loc);
       this.set('optionsVisible', true);
     },

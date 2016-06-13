@@ -237,7 +237,7 @@ class PluginApi {
    *    icon: 'eye-slash',
    *    label: 'composer.toggle_whisper',
    *    condition: controller.get('canWhisper')
-   *  }
+   *  };
    * });
    * ```
   **/
