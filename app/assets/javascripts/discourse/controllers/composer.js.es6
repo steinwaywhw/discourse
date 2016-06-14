@@ -42,6 +42,12 @@ function loadDraft(store, opts) {
   }
 }
 
+const _popupMenuOptionsCallbacks = [];
+
+export function addPopupMenuOptionsCallback(callback) {
+  _popupMenuOptionsCallbacks.push(callback);
+}
+
 export default Ember.Controller.extend({
   needs: ['modal', 'topic', 'application'],
   replyAsNewTopicDraft: Em.computed.equal('model.draftKey', Composer.REPLY_AS_NEW_TOPIC_KEY),
@@ -55,6 +61,20 @@ export default Ember.Controller.extend({
   isUploading: false,
   topic: null,
   linkLookup: null,
+
+  init() {
+    this._super();
+    const self = this
+
+    addPopupMenuOptions(function(controlller) {
+      return {
+        action: 'toggleWhisper',
+        icon: 'eye-slash',
+        label: 'composer.toggle_whisper',
+        condition: controlller.get("canWhisper")
+      }
+    });
+  },
 
   showToolbar: Em.computed({
     get(){
@@ -90,6 +110,11 @@ export default Ember.Controller.extend({
   canWhisper(action) {
     const currentUser = this.currentUser;
     return currentUser && currentUser.get('staff') && this.siteSettings.enable_whispers && action === Composer.REPLY;
+  },
+
+  @computed
+  popupMenuOptions() {
+    _popupMenuOptionsCallback.map(callback => callback(this));
   },
 
   showWarning: function() {
